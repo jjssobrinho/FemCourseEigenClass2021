@@ -21,14 +21,18 @@ Geom1d& Geom1d::operator=(const Geom1d& copy) {
 }
 
 void Geom1d::Shape(const VecDouble &xi, VecDouble &phi, MatrixDouble &dphi) {
-    DebugStop();
+    phi(0)  = (1.-xi(0))/2.;
+    phi(1)  = (1.+xi(0))/2.;
+    dphi(0) = -xi(0)/2.; 
+    dphi(1) = xi(0)/2.; 
 }
 
 void Geom1d::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     DebugStop();
 }
 
-void Geom1d::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, MatrixDouble &gradx) {
+void Geom1d::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, 
+                   MatrixDouble &gradx) {
     DebugStop();
 }
 
