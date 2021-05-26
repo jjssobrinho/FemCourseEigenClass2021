@@ -27,11 +27,17 @@ void Shape1d::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, MatrixD
     }
     
     auto nshape = NShapeFunctions(orders);
+    //std::cout << "nshape = " << nshape << std::endl;
+    // outputs were: 2, 2, 3, 3 for each test called
     phi.resize(nshape);
     dphi.resize(1,nshape);
         
-    std::cout << "Please implement me\n";
-    DebugStop();
+    //std::cout << "Please implement me\n";
+    double csi = xi[0];
+    phi[0] = 0.5*(1.-csi);
+    phi[1] = 0.5*(1.+csi);
+    dphi(0,0) = -0.5;
+    dphi(0,1) = 0.5;
 }
 
 /// returns the number of shape functions associated with a side

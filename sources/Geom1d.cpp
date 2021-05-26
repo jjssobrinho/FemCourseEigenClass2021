@@ -68,7 +68,7 @@ void Geom1d::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x,
 }
 
 void Geom1d::SetNodes(const VecInt &nodes) {
-    if(nodes.rows() != 2)
+    if(nodes.rows() != 2) DebugStop();
     fNodeIndices = nodes;
 }
 

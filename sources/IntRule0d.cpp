@@ -30,9 +30,11 @@ IntRule0d::IntRule0d(int order) {
 void IntRule0d::SetOrder(int order) {
     fOrder = order;  
     
-    if (order != 0) {
-        DebugStop();
-    }
+    //if (order != 0) {
+    //    std::cout << "Debug stop in SetOrder" << std::endl;
+    //    std::cout << "order= " << order << std::endl;
+    //    DebugStop();
+    //}
 
     int npoints = 1;
     
