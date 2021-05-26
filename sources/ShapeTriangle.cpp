@@ -43,9 +43,18 @@ void ShapeTriangle::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, M
     dphi(0,2) =  0.;
     dphi(1,2) =  1.;
     
-    std::cout << "Please implement me\n";
-    DebugStop();
-    
+    int count = 3;
+    int is;
+    for (is = 3; is < 6; is++){ // sides loop
+        if (orders[is] == 2){
+            int is1 = SideNodeLocIndex(is,0);
+            int is2 = SideNodeLocIndex(is,1);
+            phi[is] = 4.*phi[is1]*phi[is2];
+            dphi(0,is) = 4.*(dphi(0, is1) * phi[is2] + phi[is1] * dphi(0,is2));
+            dphi(1,is) = 4.*(dphi(1, is1) * phi[is2] + phi[is1] * dphi(1,is2));
+            count++;
+        } else if (orders[is] != 1) DebugStop();
+    }
     
 }
 
