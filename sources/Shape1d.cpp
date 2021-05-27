@@ -38,6 +38,10 @@ void Shape1d::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, MatrixD
     phi[1] = 0.5*(1.+csi);
     dphi(0,0) = -0.5;
     dphi(0,1) = 0.5;
+
+    std::cout << "csi= " << xi[0] << std::endl;
+    std::cout << "phi0= " << phi[0] << " phi1= " << phi[1] << std::endl;
+
 }
 
 /// returns the number of shape functions associated with a side

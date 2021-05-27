@@ -791,9 +791,9 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  =  \
-                         /Users/philippedevloo/Programming/GitHub/FEMCourseResearch/FEMCourseEigen/src_2021 \
-                         /Users/philippedevloo/Programming/GitHub/FEMCourseResearch/FEMCourseEigen/mainprograms \
-                         /Users/philippedevloo/Programming/GitHub/FEMCourseResearch/FEMCourseEigen/headers2021
+                         /home/jdasilva/phd/PP390/FemCourseEigenClass2021/sources \
+                         /home/jdasilva/phd/PP390/FemCourseEigenClass2021/mainprograms \
+                         /home/jdasilva/phd/PP390/FemCourseEigenClass2021/headers
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1133,7 +1133,7 @@ GENERATE_HTML          = YES
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_OUTPUT            = /Users/philippedevloo/Programming/GitHub/FEMCourseResearch/FEMCourseDoc
+HTML_OUTPUT            = /home/jdasilva/phd/PP390/FemCourseEigenClass2021/doc 
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for each
 # generated HTML page (for example: .htm, .php, .asp).
