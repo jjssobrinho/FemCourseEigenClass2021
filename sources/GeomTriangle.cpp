@@ -30,6 +30,9 @@ void GeomTriangle::Shape(const VecDouble& xi, VecDouble& phi, MatrixDouble& dphi
     double qsi = xi[0];
     double eta = xi[1];
 
+    phi.resize(nCorners);
+    dphi.resize(Dimension,nCorners);
+
     phi[0] = 1. - qsi - eta;
     phi[1] = qsi;
     phi[2] = eta;

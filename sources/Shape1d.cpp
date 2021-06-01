@@ -39,8 +39,10 @@ void Shape1d::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, MatrixD
     dphi(0,0) = -0.5;
     dphi(0,1) = 0.5;
 
-    std::cout << "csi= " << xi[0] << std::endl;
-    std::cout << "phi0= " << phi[0] << " phi1= " << phi[1] << std::endl;
+    if (orders[2] == 2){
+        phi[2] = 1. - csi*csi;
+        dphi(0,2) = -2.*csi;
+    }
 
 }
 

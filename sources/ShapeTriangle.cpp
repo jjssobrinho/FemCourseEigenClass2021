@@ -26,8 +26,9 @@ void ShapeTriangle::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, M
     }
 
     int nshape = NShapeFunctions(orders);
-    //phi.resize(nshape);
-    //dphi.resize(2,nshape);
+    phi.resize(nshape);
+    dphi.resize(2,nshape);
+
     if (orders[nshape-1] > 2) {
         std::cout << "ShapeTriangle::Shape, only implemented until order = 2" << std::endl;
         DebugStop();
@@ -38,34 +39,26 @@ void ShapeTriangle::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, M
     phi[0] =  1.-xi[0]-xi[1];
     phi[1] =  xi[0];
     phi[2] =  xi[1];
+
     dphi(0,0) = -1.;
     dphi(1,0) = -1.;
     dphi(0,1) =  1.;
     dphi(1,1) =  0.;
     dphi(0,2) =  0.;
     dphi(1,2) =  1.;
-    std::cout << "xi.size() =" << xi.size() << std::endl;
-    std::cout << "csi= " << xi[0] << std::endl;
-    std::cout << "eta= " << xi[1] << std::endl;
-    std::cout << "phi0= " << phi[0] << " phi1= " << phi[1] << 
-    " phi2= " << phi[2] << "\n"<< std::endl;
-
 
     int count = 3;
-    int is;
-    for (is = 3; is < 6; is++){ // sides loop
-        if (orders[is] == 2){
-            int is1 = SideNodeLocIndex(is,0);
-            int is2 = SideNodeLocIndex(is,1);
-            std::cout << "is: " << is << std::endl;
-            std::cout << "is1: " << is1 << std::endl;
-            std::cout << "is2: " << is2 << std::endl;
-            std::cout << "phi.size(): " << phi.size() << std::endl;
-            phi[is] = 4.*phi[is1]*phi[is2];
-            std::cout << "line nr= " << __LINE__ << std::endl;
-            dphi(0,is) = 4.*(dphi(0, is1) * phi[is2] + phi[is1] * dphi(0,is2));
-            dphi(1,is) = 4.*(dphi(1, is1) * phi[is2] + phi[is1] * dphi(1,is2));
-            count++;
+    if (nshape > nCorners){
+        int is;
+        for (is = 3; is < 6; is++){ // sides loop
+            if (orders[is] == 2){
+                int is1 = SideNodeLocIndex(is,0);
+                int is2 = SideNodeLocIndex(is,1);
+                phi[is] = 4.*phi[is1]*phi[is2];
+                dphi(0,is) = 4.*(dphi(0, is1) * phi[is2] + phi[is1] * dphi(0,is2));
+                dphi(1,is) = 4.*(dphi(1, is1) * phi[is2] + phi[is1] * dphi(1,is2));
+                count++;
+            }
         }
     }
     //if (orders[6] == 3) {

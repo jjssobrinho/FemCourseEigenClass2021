@@ -21,48 +21,61 @@ Geom1d& Geom1d::operator=(const Geom1d& copy) {
 }
 
 void Geom1d::Shape(const VecDouble &xi, VecDouble &phi, MatrixDouble &dphi) {
-    if(xi.size() != Dimension || phi.size() != nCorners || 
-    dphi.rows() != Dimension || dphi.cols() != nCorners) DebugStop();
-    phi[0]  = (1.+xi[0])*0.5;
-    phi[1]  = (1.-xi[0])*0.5;
-    dphi(0,0) = 0.5; 
-    dphi(0,1) = -0.5; 
+    if(xi.size() <= 0 || xi.size() > Dimension) DebugStop();
+
+    phi.resize(2);
+    dphi.resize(1,2);
+
+    phi[0]  = (1.-xi[0])*0.5;
+    phi[1]  = (1.+xi[0])*0.5;
+    dphi(0,0) = -0.5; 
+    dphi(0,1) = 0.5; 
 }
 
 void Geom1d::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
-    if (xi.size() != Dimension) DebugStop();
-    if (x.size() != NodeCo.rows()) DebugStop();
-    if (NodeCo.cols() != nCorners) DebugStop();
+    if (NodeCo.rows() <= 0 || NodeCo.rows() > 3) DebugStop();
+    if (NodeCo.cols() <= 0 || NodeCo.cols() > NumNodes()) DebugStop();
+    // if (xi.size() != Dimension) DebugStop();
+    int dim = NodeCo.rows();
+    if (x.size() <= 0 || x.size() > dim) DebugStop();
+    
     int nrow = NodeCo.rows();
     
-    VecDouble phi(2);
-    MatrixDouble dphi(Dimension, 2);
+    VecDouble phi;
+    MatrixDouble dphi;
     Shape(xi, phi, dphi);
+    x.resize(dim);
+    x.setZero();
+    int nnodes = NumNodes();
+
     for (int i = 0; i < nrow; i++){
-        x[i] = NodeCo(i,0)*phi[0] + NodeCo(i,1)*phi[1];
+        for (int j = 0; j < nnodes; j++) {
+            x[i] += NodeCo(i,j)*phi[j];
+        }
     }
 }
 
 void Geom1d::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, 
                    MatrixDouble &gradx) {
-    if (xi.size() != Dimension) DebugStop();
-    if (x.size() != NodeCo.rows()) DebugStop();
-    if (NodeCo.cols() != nCorners) DebugStop();
+    if (NodeCo.rows() <= 0 || NodeCo.rows() > 3) DebugStop();
+    if (NodeCo.cols() <= 0 || NodeCo.cols() > NumNodes()) DebugStop();
+    int dim = NodeCo.rows();
+    if (x.size() <= 0 || x.size() > dim) DebugStop();
     
-    int nrow = NodeCo.rows();
-    int ncol = NodeCo.cols();
-
-    gradx.resize(nrow,1);
-    gradx.setZero();
-    x.setZero();
-
-    VecDouble phi(2);
-    MatrixDouble dphi(Dimension, 2);
+    VecDouble phi;
+    MatrixDouble dphi;
     Shape(xi, phi, dphi);
-    for (int j = 0; j < nrow; j++){
-        for (int i = 0; i < ncol; i++){
-            x[j] += NodeCo(j,i)*phi[i];
-            gradx(j,0) += NodeCo(j,i)*dphi(0,i);
+    int nnodes = NumNodes();
+    int masterdim = Dimension;
+    x.resize(dim);
+    x.setZero();
+    gradx.resize(dim,masterdim);
+    gradx.setZero();
+
+    for (int k = 0; k < nnodes; k++){
+        for (int i = 0; i < dim; i++){
+            x[i] += phi[k]*NodeCo(i, k);
+            for (int j = 0; j < masterdim; j++)gradx(i,j) += NodeCo(i, k)*dphi(j, k);
         }
     }
 }

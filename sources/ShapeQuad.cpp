@@ -10,11 +10,13 @@
 #include "Shape1d.h"
 #include "ShapeQuad.h"
 
-/// computes the shape functions in function of the coordinate in parameter space and orders of the shape functions (size of orders is number of sides of the element topology)
-void ShapeQuad::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, MatrixDouble &dphi){
+// computes the shape functions in function of the coordinate in parameter
+// space and orders of the shape functions (size of orders is number of 
+// sides of the element topology)
+void ShapeQuad::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, 
+                      MatrixDouble &dphi){
     
-    for (int i = 0; i < orders.size(); i++)
-    {
+    for (int i = 0; i < orders.size(); i++) {
         if (orders[i] < 0) {
             std::cout << "ShapeQuad::Shape: Invalid dimension for arguments: order\n";
             DebugStop();
@@ -32,8 +34,73 @@ void ShapeQuad::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, Matri
         DebugStop();
     }
 
-    std::cout << "Please implement me\n";
-    DebugStop();
+    phi.resize(nf);
+    dphi.resize(2,nf);
+
+    double csi = xi[0];
+    double eta = xi[1];
+
+    phi[0] = 0.25*(1.-csi)*(1.-eta);
+    phi[1] = 0.25*(1.+csi)*(1.-eta);
+    phi[2] = 0.25*(1.+csi)*(1.+eta);
+    phi[3] = 0.25*(1.-csi)*(1.+eta);
+
+    dphi(0,0) = -0.25*(1.-eta);
+    dphi(1,0) = -0.25*(1.-csi);
+    dphi(0,1) = 0.25*(1.-eta);
+    dphi(1,1) = -0.25*(1.+csi);
+    dphi(0,2) = 0.25*(1.+eta);
+    dphi(1,2) = 0.25*(1.+csi);
+    dphi(0,3) = -0.25*(1.+eta);
+    dphi(1,3) = 0.25*(1.-csi);
+
+    int count = 4;
+    if ( nf > nCorners) {
+        if (orders[4] == 2) {
+            phi[4] = 4.*phi[0]*(phi[1] + phi[2]);
+            dphi(0,4) = 4.*(phi[1] + phi[2])*dphi(0,0) + 4.*phi[0]*
+                        (dphi(0,1) + dphi(0,2));
+            dphi(1,4) = 4.*(phi[1] + phi[2])*dphi(1,0) + 4.*phi[0]*
+                        (dphi(1,1) + dphi(1,2));
+            count++;
+        } else if(orders[4] != 1) DebugStop();
+
+        if (orders[5] == 2) {
+            phi[5] = 4.*phi[1]*(phi[2] + phi[3]);
+            dphi(0,5) = 4.*(phi[1] + phi[2])*dphi(0,1) + 4.*phi[1]*
+                        (dphi(0,2) + dphi(0,3));
+            dphi(1,5) = 4.*(phi[1] + phi[2])*dphi(1,1) + 4.*phi[1]*
+                        (dphi(1,2) + dphi(1,3));
+            count++;
+        } else if(orders[5] != 1) DebugStop();
+
+        if (orders[6] == 2) {
+            phi[6] = 4.*phi[2]*(phi[3] + phi[0]);
+            dphi(0,6) = 4.*(phi[3] + phi[0])*dphi(0,2) + 4.*phi[2]*
+                        (dphi(0,3) + dphi(0,0));
+            dphi(1,6) = 4.*(phi[3] + phi[0])*dphi(1,2) + 4.*phi[2]*
+                        (dphi(1,3) + dphi(1,0));
+            count++;
+        } else if(orders[6] != 1) DebugStop();
+
+        if (orders[7] == 2) {
+            phi[7] = 4.*phi[3]*(phi[0] + phi[1]);
+            dphi(0,7) = 4.*(phi[0] + phi[1])*dphi(0,3) + 4.*phi[3]*
+                        (dphi(0,0) + dphi(0,1));
+            dphi(1,7) = 4.*(phi[0] + phi[1])*dphi(1,3) + 4.*phi[3]*
+                        (dphi(1,0) + dphi(1,1));
+            count++;
+        } else if(orders[7] != 1) DebugStop();
+
+        if (orders[8] >= 2) {
+            phi[8] = 16.*phi[0]*phi[2];
+            dphi(0,8) = 16.*dphi(0,0)*phi[2] + 16.*dphi(0,2)*phi[0];
+            dphi(1,8) = 16.*dphi(1,0)*phi[2] + 16.*dphi(1,2)*phi[0];
+            count++;
+        } else if(orders[8] != 1) DebugStop();
+    }
+    
+    if (count != nf) DebugStop();
 }
 
 /// returns the number of shape functions associated with a side
