@@ -37,3 +37,6 @@ sources/.vscode/
 
 # Documentation
 doc*
+
+# VSCODE
+.vscode

@@ -21,7 +21,10 @@ Geom1d& Geom1d::operator=(const Geom1d& copy) {
 }
 
 void Geom1d::Shape(const VecDouble &xi, VecDouble &phi, MatrixDouble &dphi) {
-    if(xi.size() <= 0 || xi.size() > Dimension) DebugStop();
+    if(xi.size() != Dimension) DebugStop();
+    //if(phi.size() != nCorners) DebugStop();
+    //if(dphi.rows() != Dimension) DebugStop();
+    //if(dphi.cols() != nCorners) DebugStop();
 
     phi.resize(2);
     dphi.resize(1,2);
@@ -33,12 +36,12 @@ void Geom1d::Shape(const VecDouble &xi, VecDouble &phi, MatrixDouble &dphi) {
 }
 
 void Geom1d::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
-    if (NodeCo.rows() <= 0 || NodeCo.rows() > 3) DebugStop();
-    if (NodeCo.cols() <= 0 || NodeCo.cols() > NumNodes()) DebugStop();
-    // if (xi.size() != Dimension) DebugStop();
+    if (xi.size() != Dimension) DebugStop();  // colocar em todos
+    if (NodeCo.rows() != Dimension) DebugStop();
+    if (NodeCo.cols() != nCorners) DebugStop();
+    if (x.size() != Dimension) DebugStop();
+
     int dim = NodeCo.rows();
-    if (x.size() <= 0 || x.size() > dim) DebugStop();
-    
     int nrow = NodeCo.rows();
     
     VecDouble phi;
@@ -57,10 +60,12 @@ void Geom1d::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
 
 void Geom1d::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, 
                    MatrixDouble &gradx) {
-    if (NodeCo.rows() <= 0 || NodeCo.rows() > 3) DebugStop();
-    if (NodeCo.cols() <= 0 || NodeCo.cols() > NumNodes()) DebugStop();
+    if (xi.size() != Dimension) DebugStop();
+    if (NodeCo.rows() != Dimension) DebugStop();
+    if (NodeCo.cols() != nCorners) DebugStop();
+    if (x.size() != Dimension) DebugStop();
+
     int dim = NodeCo.rows();
-    if (x.size() <= 0 || x.size() > dim) DebugStop();
     
     VecDouble phi;
     MatrixDouble dphi;
@@ -75,7 +80,8 @@ void Geom1d::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x,
     for (int k = 0; k < nnodes; k++){
         for (int i = 0; i < dim; i++){
             x[i] += phi[k]*NodeCo(i, k);
-            for (int j = 0; j < masterdim; j++)gradx(i,j) += NodeCo(i, k)*dphi(j, k);
+            for (int j = 0; j < masterdim; j++)
+                gradx(i,j) += NodeCo(i, k)*dphi(j, k);
         }
     }
 }
@@ -90,7 +96,7 @@ void Geom1d::GetNodes(VecInt &nodes) const {
 }
 
 int Geom1d::NodeIndex(int node) const {
-    if(node<0 || node > 2) DebugStop();
+    //if(node<0 || node > 2) DebugStop();
     return fNodeIndices[node];
 }
 
@@ -99,11 +105,11 @@ int Geom1d::NumNodes(){
 }
 
 GeoElementSide Geom1d::Neighbour(int side) const{
-    if(side <0 || side>2) DebugStop();
+    //if(side <0 || side>2) DebugStop();
     return fNeighbours[side];
 }
 
 void Geom1d::SetNeighbour(int side, const GeoElementSide &neighbour) {
-    if(side < 0 || side > 2) DebugStop();
+    //if(side < 0 || side > 2) DebugStop();
     fNeighbours[side]=neighbour;
 }

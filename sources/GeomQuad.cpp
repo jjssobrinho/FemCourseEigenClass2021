@@ -21,8 +21,12 @@ GeomQuad& GeomQuad::operator=(const GeomQuad& copy) {
 }
 
 void GeomQuad::Shape(const VecDouble &xi, VecDouble &phi, MatrixDouble &dphi) {
-    if(xi.size() != Dimension || phi.size() != nCorners || 
-    dphi.rows() != Dimension || dphi.cols() != nCorners) DebugStop();
+    if(xi.size() != Dimension) DebugStop(); 
+    //if(xi.size() != Dimension || phi.size() != nCorners || 
+    //dphi.rows() != Dimension || dphi.cols() != nCorners) DebugStop();
+
+    phi.resize(nCorners);
+    dphi.resize(Dimension, nCorners);
 
     double qsi = xi[0];
     double eta = xi[1];
@@ -43,7 +47,6 @@ void GeomQuad::Shape(const VecDouble &xi, VecDouble &phi, MatrixDouble &dphi) {
 
     dphi(0,3) = -0.25*(1.+eta);
     dphi(1,3) = 0.25*(1.-qsi);
-    
 }
 
 
@@ -53,9 +56,8 @@ void GeomQuad::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     if(x.size() < NodeCo.rows()) DebugStop();
     if(NodeCo.cols() != nCorners) DebugStop();
     
-    VecDouble phi(nCorners);
-    MatrixDouble dphi(Dimension, nCorners);
-    
+    VecDouble phi;
+    MatrixDouble dphi;
     Shape(xi, phi, dphi);
 
     for (int i = 0; i < NodeCo.rows(); i++) {
@@ -64,8 +66,6 @@ void GeomQuad::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
             x[i] += phi[j] * NodeCo(i, j);
         }
     }
-    //std::cout << __LINE__ << std::endl;  // Debug help
-    //std::cout << __PRETTY_FUNCTION__ << std::endl;
 }
 
 void GeomQuad::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, MatrixDouble &gradx) {

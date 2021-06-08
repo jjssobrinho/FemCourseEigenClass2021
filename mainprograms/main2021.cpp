@@ -22,5 +22,14 @@ using std::cin;
 
 int main (){
 
+    ReadGmsh readingGmsh;
+    GeoMesh mesh;
+    std::string filename = "/home/jdasilva/test-gmsh.msh";
+    VTKGeoMesh vtk;
+
+    cout << "Reading Gmsh file: " << filename << " and converting to VTK." << endl;
+    readingGmsh.Read(mesh, "/home/jdasilva/test-gmsh.msh");
+    vtk.PrintGMeshVTK(&mesh, "./mesh.vtk");
+
     return 0;
 }

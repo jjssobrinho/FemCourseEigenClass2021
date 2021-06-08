@@ -24,14 +24,15 @@ GeomTriangle& GeomTriangle::operator=(const GeomTriangle& copy) {
 }
 
 void GeomTriangle::Shape(const VecDouble& xi, VecDouble& phi, MatrixDouble& dphi) {
-    if(xi.size() != Dimension || phi.size() != nCorners || 
-    dphi.rows() != Dimension || dphi.cols() != nCorners) DebugStop();
+    //if(xi.size() != Dimension || phi.size() != nCorners || 
+    //dphi.rows() != Dimension || dphi.cols() != nCorners) DebugStop();
+    if(xi.size() != Dimension) DebugStop();
     
     double qsi = xi[0];
     double eta = xi[1];
 
     phi.resize(nCorners);
-    dphi.resize(Dimension,nCorners);
+    dphi.resize(Dimension, nCorners);
 
     phi[0] = 1. - qsi - eta;
     phi[1] = qsi;
@@ -45,16 +46,17 @@ void GeomTriangle::Shape(const VecDouble& xi, VecDouble& phi, MatrixDouble& dphi
 
     dphi(0,2) = 0.0;
     dphi(1,2) = 1.0;
-
 }
 
 void GeomTriangle::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     if(xi.size() != Dimension) DebugStop();
-    if(x.size() != NodeCo.rows()) DebugStop();
+    if(NodeCo.rows() != Dimension) DebugStop();
     if(NodeCo.cols() != nCorners) DebugStop();
+    if(x.size() != Dimension) DebugStop();
 
-    VecDouble phi(nCorners);
-    MatrixDouble dphi(Dimension, nCorners);
+    VecDouble phi;
+    MatrixDouble dphi;
+    Shape(xi, phi, dphi);
 
     for (int i = 0; i < Dimension; i++) {
         x[i] = 0.0;
@@ -73,17 +75,16 @@ void GeomTriangle::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x
     gradx.setZero();
     x.setZero();
 
-    VecDouble phi(nCorners);
-    MatrixDouble dphi(Dimension, nCorners);
+    VecDouble phi;
+    MatrixDouble dphi;
     Shape(xi, phi, dphi);
     for (int i = 0; i < nCorners; i++) {
         for (int j = 0; j < Dimension; j++) {
             x[j] += NodeCo(j,i) * phi[i];
             gradx(j, 0) += NodeCo(j, i) * dphi(0, i);
-            gradx(j, 1) += NodeCo(j, i) * dphi(1, i);
+            gradx(j, 1) += NodeCo(j, i) * dphi(1, i); // Check this!
         }
     }
-
 }
 
 void GeomTriangle::SetNodes(const VecInt &nodes) {
