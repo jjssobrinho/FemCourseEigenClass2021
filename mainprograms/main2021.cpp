@@ -25,11 +25,12 @@ int main (){
     ReadGmsh readingGmsh;
     GeoMesh mesh;
     std::string filename = "/home/jdasilva/test-gmsh.msh";
+    std::string outputFile = "/home/jdasilva/mesh.vtk";
     VTKGeoMesh vtk;
 
     cout << "Reading Gmsh file: " << filename << " and converting to VTK." << endl;
-    readingGmsh.Read(mesh, "/home/jdasilva/test-gmsh.msh");
-    vtk.PrintGMeshVTK(&mesh, "./mesh.vtk");
+    readingGmsh.Read(mesh, filename);
+    vtk.PrintGMeshVTK(&mesh, outputFile);
 
     return 0;
 }

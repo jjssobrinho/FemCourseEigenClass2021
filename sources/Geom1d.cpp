@@ -36,6 +36,7 @@ void Geom1d::Shape(const VecDouble &xi, VecDouble &phi, MatrixDouble &dphi) {
 }
 
 void Geom1d::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
+    if (NodeCo.rows() <= 0 || NodeCo.rows() > 3) DebugStop();
     if (xi.size() != Dimension) DebugStop();  // colocar em todos
     //if (NodeCo.rows() <= 0 || NodeCo.rows() > Dimension) DebugStop();
     if (NodeCo.cols() != nCorners) DebugStop();
@@ -47,7 +48,7 @@ void Geom1d::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     VecDouble phi;
     MatrixDouble dphi;
     Shape(xi, phi, dphi);
-    x.resize(dim);
+    //x.resize(dim); // If x is resized VTK print breaks!
     x.setZero();
     int nnodes = NumNodes();
 
@@ -96,7 +97,7 @@ void Geom1d::GetNodes(VecInt &nodes) const {
 }
 
 int Geom1d::NodeIndex(int node) const {
-    //if(node<0 || node > 2) DebugStop();
+    if(node<0 || node > 2) DebugStop();
     return fNodeIndices[node];
 }
 
@@ -105,11 +106,11 @@ int Geom1d::NumNodes(){
 }
 
 GeoElementSide Geom1d::Neighbour(int side) const{
-    //if(side <0 || side>2) DebugStop();
+    if(side <0 || side>2) DebugStop();
     return fNeighbours[side];
 }
 
 void Geom1d::SetNeighbour(int side, const GeoElementSide &neighbour) {
-    //if(side < 0 || side > 2) DebugStop();
+    if(side < 0 || side > 2) DebugStop();
     fNeighbours[side]=neighbour;
 }
