@@ -50,9 +50,9 @@ void GeomTriangle::Shape(const VecDouble& xi, VecDouble& phi, MatrixDouble& dphi
 
 void GeomTriangle::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     if(xi.size() != Dimension) DebugStop();
-    if(NodeCo.rows() != Dimension) DebugStop();
+    if(NodeCo.rows() < 2 || NodeCo.rows() > 3) DebugStop();
     if(NodeCo.cols() != nCorners) DebugStop();
-    if(x.size() != Dimension) DebugStop();
+    if(x.size() <= 1) DebugStop();
 
     VecDouble phi;
     MatrixDouble dphi;

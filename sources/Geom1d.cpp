@@ -37,9 +37,9 @@ void Geom1d::Shape(const VecDouble &xi, VecDouble &phi, MatrixDouble &dphi) {
 
 void Geom1d::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     if (xi.size() != Dimension) DebugStop();  // colocar em todos
-    if (NodeCo.rows() != Dimension) DebugStop();
+    //if (NodeCo.rows() <= 0 || NodeCo.rows() > Dimension) DebugStop();
     if (NodeCo.cols() != nCorners) DebugStop();
-    if (x.size() != Dimension) DebugStop();
+    if (x.size() <= 0) DebugStop();
 
     int dim = NodeCo.rows();
     int nrow = NodeCo.rows();

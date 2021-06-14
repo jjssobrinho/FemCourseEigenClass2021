@@ -33,7 +33,7 @@ void ShapeTriangle::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, M
         std::cout << "ShapeTriangle::Shape, only implemented until order = 2" << std::endl;
         DebugStop();
     }
-    if (xi.size() != 2) DebugStop();
+    if (xi.size() < 2) DebugStop();
     
     // Linear order
     phi[0] =  1.-xi[0]-xi[1];
