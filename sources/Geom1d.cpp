@@ -42,13 +42,12 @@ void Geom1d::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     if (NodeCo.cols() != nCorners) DebugStop();
     if (x.size() <= 0) DebugStop();
 
-    int dim = NodeCo.rows();
     int nrow = NodeCo.rows();
     
     VecDouble phi;
     MatrixDouble dphi;
     Shape(xi, phi, dphi);
-    //x.resize(dim); // If x is resized VTK print breaks!
+    if (x.size() < nrow) x.resize(nrow); // If x is resized VTK print breaks!
     x.setZero();
     int nnodes = NumNodes();
 
@@ -62,20 +61,21 @@ void Geom1d::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
 void Geom1d::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, 
                    MatrixDouble &gradx) {
     if (xi.size() != Dimension) DebugStop();
-    if (NodeCo.rows() != Dimension) DebugStop();
     if (NodeCo.cols() != nCorners) DebugStop();
-    if (x.size() != Dimension) DebugStop();
+    if (x.size() != NodeCo.rows()) DebugStop();
 
     int dim = NodeCo.rows();
+    gradx.setZero();
+    x.setZero();
     
     VecDouble phi;
     MatrixDouble dphi;
     Shape(xi, phi, dphi);
     int nnodes = NumNodes();
     int masterdim = Dimension;
-    x.resize(dim);
+    if (x.size() < dim) x.resize(dim);
     x.setZero();
-    gradx.resize(dim,masterdim);
+    if (gradx.rows() < dim ) gradx.resize(dim,masterdim);
     gradx.setZero();
 
     for (int k = 0; k < nnodes; k++){
