@@ -4,9 +4,10 @@
  * and open the template in the editor.
  */
 
+///\cond
 #include <iostream> 
+///\endcond
 #include "IntRuleTriangle.h"
-#include "tpanic.h"
 
 #define Perm3(a)	a, a, a
 #define Dup3(w)		(0.5L*w)
