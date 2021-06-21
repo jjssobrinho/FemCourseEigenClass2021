@@ -168,23 +168,18 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
 
         case 1: //ESol
         {
-            //+++++++++++++++++
-            // Please implement me
-            std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            return; // FIX ME
-            DebugStop();
-            //+++++++++++++++++
+            Solout = data.solution;
         }
             break;
 
         case 2: //EDSol
         {
-            //+++++++++++++++++
-            // Please implement me
-            std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            return; // FIX ME
-            DebugStop();
-            //+++++++++++++++++
+            Solout.resize(rows * cols);
+            for (int i = 0; i < rows; i++){
+                for (int j = 0; j < cols; j++){
+                    Solout[i * cols + j] = gradu(i, j);
+                }
+            }
         }
             break;
         case 3: //EFlux
