@@ -8,7 +8,7 @@
 
 double MathStatement::gBigNumber = 1.e12;
 
-MathStatement::MathStatement() {
+MathStatement::MathStatement() : MathDim(0) {
 }
 
 MathStatement::MathStatement(const MathStatement &copy) {
