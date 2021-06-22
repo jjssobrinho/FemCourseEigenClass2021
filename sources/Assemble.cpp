@@ -47,11 +47,11 @@ void Assemble::OptimizeBandwidth() {
 
 void Assemble::Compute(MatrixDouble &globmat, MatrixDouble &rhs) {
     
-    auto neq = NEquations();
+    //auto neq = NEquations();
     
-    globmat.resize(neq, neq);
+    //globmat.resize(neq, neq);
     globmat.setZero();
-    rhs.resize(neq, 1);
+    //rhs.resize(neq, 1);
     rhs.setZero();
     
     int64_t nelem = cmesh->GetGeoMesh()->NumElements();
@@ -67,9 +67,28 @@ void Assemble::Compute(MatrixDouble &globmat, MatrixDouble &rhs) {
 
         cel->CalcStiff(ek, ef);
         
-        //+++++++++++++++++
-        std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-        DebugStop();
-        //+++++++++++++++++
+        auto ndof = cel->NDOF();
+        VecInt iglob(ndof); //gobal equation index
+        int ni = 0;
+        for (int i = 0; i < ndof; i++){
+            auto dofindex = cel->GetDOFIndex(i);
+            const DOF &dof = cmesh->GetDOF(dofindex);
+            // the above object has the data necessary to calculate the 
+            // global indexes 
+            for (int j = 0; j < dof.GetNShape()*dof.GetNState(); j++){
+                iglob[ni] = dof.GetFirstEquation() + j;
+                ni++;
+            }
+        }
+
+        for (int i = 0; i < ek.rows(); i++){
+            int IG = iglob[i]; //global index i
+            rhs(IG, 0) += ef(i, 0);
+
+            for (int j = 0; j < ek.rows(); j++){
+                int JG = iglob[j]; //global index j
+                globmat(IG, JG) += ek(i, j);
+            }
+        }
     }
 }
