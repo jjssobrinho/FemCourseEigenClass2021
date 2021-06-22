@@ -14,9 +14,6 @@ target_link_libraries (Contribute Eigen3::Eigen)
 add_executable(CalcStiff mainCalcstiff.cpp ${SOURCES})
 target_link_libraries (CalcStiff Eigen3::Eigen)
 
-add_executable(TestIntegrate TestIntegrate.cpp ${SOURCES} ${HEADERS})
-target_link_libraries (TestIntegrate PRIVATE Eigen3::Eigen Catch2::Catch2)
-
 add_executable(Fem2021 main2021.cpp)
 target_link_libraries (Fem2021 course_library Eigen3::Eigen)
 
