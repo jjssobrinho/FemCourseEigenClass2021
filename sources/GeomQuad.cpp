@@ -40,7 +40,7 @@ void GeomQuad::Shape(const VecDouble &xi, VecDouble &phi, MatrixDouble &dphi) {
     dphi(1,0) = -0.25*(1.-qsi);
 
     dphi(0,1) = 0.25*(1.-eta);
-    dphi(1,1) = -0.25*(1.-qsi);
+    dphi(1,1) = -0.25*(1.+qsi);
 
     dphi(0,2) = 0.25*(1.+eta);
     dphi(1,2) = 0.25*(1.+qsi);

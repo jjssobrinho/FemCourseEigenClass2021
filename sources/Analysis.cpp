@@ -105,6 +105,8 @@ VecDouble Analysis::PostProcessError(std::ostream &out, PostProcess &defPostProc
 	if(gel->Dimension() != dim) continue;
         if (el) {
             if (el->GetStatement()->GetMatID() == 1) {
+                //caveat: only evaluates error if material-id == 1.
+                //this hard-code approach should be avoided.
                 errors.setZero();
                 fExact = defPostProc.GetExact();
                 el->EvaluateError(fExact, errors);
