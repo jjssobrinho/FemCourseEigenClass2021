@@ -1,15 +1,19 @@
 
-///\cond
+
 #include <iostream>
 #include <math.h>
-///\endcond
+#include "IntRule.h"
+#include "IntRule1d.h"
+#include "IntRuleQuad.h"
+#include "IntRuleTetrahedron.h"
+#include "IntRuleTriangle.h"
 #include "Topology1d.h"
 #include "TopologyTriangle.h"
 #include "TopologyQuad.h"
 #include "TopologyTetrahedron.h"
+#include "DataTypes.h"
 #include "Analysis.h"
 #include "VTKGeoMesh.h"
-#include "GeoElement.h"
 #include "ReadGmsh.h"
 #include "CompMesh.h"
 #include "CompElement.h"
