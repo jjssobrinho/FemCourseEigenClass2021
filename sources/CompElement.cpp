@@ -202,7 +202,8 @@ void CompElement::CalcStiff(MatrixDouble &ek, MatrixDouble &ef) const {
 
 }
 
-void CompElement::EvaluateError(std::function<void(const VecDouble &loc, VecDouble &val, MatrixDouble &deriv) > fp, VecDouble &errors) const {
+void CompElement::EvaluateError(std::function<void(const VecDouble &loc, 
+    VecDouble &val, MatrixDouble &deriv) > fp, VecDouble &errors) const {
     MathStatement * material = this->GetStatement();
 
     if (!material) {
@@ -240,6 +241,8 @@ void CompElement::EvaluateError(std::function<void(const VecDouble &loc, VecDoub
         weight *= fabs(data.detjac);
 
         fp(data.x, u_exact, du_exact);
+        //the exact solution is part of the math statement, so
+        //it could be evalauted inside ContributeError
         this->GetMultiplyingCoeficients(data.coefs);
         data.ComputeSolution();
         material->ContributeError(data, u_exact, du_exact, values);

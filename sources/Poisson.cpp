@@ -98,7 +98,7 @@ void Poisson::ContributeError(IntPointData &data, VecDouble &u_exact, MatrixDoub
     MatrixDouble axes = data.axes;
 
     VecDouble u = data.solution;
-    MatrixDouble dudx = data.dsoldx;
+    MatrixDouble dudx = data.dsoldx; //this is dsol_daxes
 
     this->Axes2XYZ(dudx, gradu, axes);
 
@@ -183,12 +183,11 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
             break;
         case 3: //EFlux
         {
-            //+++++++++++++++++
-            // Please implement me
-            std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            return; // FIX ME
-            DebugStop();
-            //+++++++++++++++++
+            Solout.resize(Dimension());
+            auto perm = this->GetPermeability();
+            for (int i = 0; i < Dimension(); i++){
+                Solout[i] = data.dsoldx(i) * perm(i,i);
+            }
         }
             break;
 

@@ -98,23 +98,24 @@ VecDouble Analysis::PostProcessError(std::ostream &out, PostProcess &defPostProc
     int64_t nel = cmesh->GetElementVec().size();
     GeoMesh *gmesh = cmesh->GetGeoMesh();
     int dim = gmesh->Dimension();
+    fExact = defPostProc.GetExact();
 
     for (int64_t i = 0; i < nel; i++) {
         CompElement *el = cmesh->GetElement(i);
-	GeoElement *gel = el->GetGeoElement();
-	if(gel->Dimension() != dim) continue;
+	    GeoElement *gel = el->GetGeoElement();
+	    if(gel->Dimension() != dim) continue;
         if (el) {
             if (el->GetStatement()->GetMatID() == 1) {
                 //caveat: only evaluates error if material-id == 1.
                 //this hard-code approach should be avoided.
                 errors.setZero();
-                fExact = defPostProc.GetExact();
+                
                 el->EvaluateError(fExact, errors);
                 int nerrors = errors.size();
                 if(values.size() != nerrors)
                 {
-                	values.resize(nerrors);
-                	values.setZero();
+                   	values.resize(nerrors);
+                   	values.setZero();
                 }
                 for (int ier = 0; ier < nerrors; ier++) {
                     values[ier] += errors[ier] * errors[ier];
