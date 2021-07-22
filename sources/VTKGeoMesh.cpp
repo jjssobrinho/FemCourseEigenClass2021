@@ -334,8 +334,7 @@ void VTKGeoMesh::PrintCMeshVTK(CompMesh *cmesh, int dim, const std::string &file
 
 }
 
-void VTKGeoMesh::PrintSolVTK(CompMesh *cmesh, PostProcess &defPostProc, const std::string &filename){
-
+void VTKGeoMesh::PrintSolVTK(CompMesh *cmesh, PostProcess &defPostProc, const std::string &filename, bool Alldim){
     std::ofstream file(filename);
     file.clear();
     
@@ -358,11 +357,13 @@ void VTKGeoMesh::PrintSolVTK(CompMesh *cmesh, PostProcess &defPostProc, const st
     int64_t nelements = cmesh->GetElementVec().size();
     
     GeoElement *gel;
+    int meshdim = cmesh->GetGeoMesh()->Dimension();
     for(int icel = 0; icel<nelements; icel++)
     {
         CompElement * cel = cmesh->GetElement(icel);
         
         gel = cel->GetGeoElement();
+        if(!Alldim && gel->Dimension() != meshdim) continue;
         
         MatrixDouble ParamCo = NodeCoordinates(gel->Type());
         int elNnodes = ParamCo.rows();
@@ -432,6 +433,7 @@ void VTKGeoMesh::PrintSolVTK(CompMesh *cmesh, PostProcess &defPostProc, const st
                 
                 gel = cel->GetGeoElement();
                 
+                if(!Alldim && gel->Dimension() != meshdim) continue;
                 MatrixDouble ParamCo = NodeCoordinates(gel->Type());
                 int elNnodes = ParamCo.rows();
                 
@@ -479,6 +481,7 @@ void VTKGeoMesh::PrintSolVTK(CompMesh *cmesh, PostProcess &defPostProc, const st
                 CompElement * cel = cmesh->GetElement(icel);
                 
                 gel = cel->GetGeoElement();
+                if(!Alldim && gel->Dimension() != meshdim) continue;
                 
                 MatrixDouble ParamCo = NodeCoordinates(gel->Type());
                 int elNnodes = ParamCo.rows();

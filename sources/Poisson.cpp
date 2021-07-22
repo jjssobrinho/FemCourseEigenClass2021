@@ -49,16 +49,7 @@ int Poisson::NEvalErrors() const {
 }
 
 int Poisson::VariableIndex(const PostProcVar var) const {
-    if (var == ENone) return ENone;
-    if (var == ESol) return ESol;
-    if (var == EDSol) return EDSol;
-    if (var == EFlux) return EFlux;
-    if (var == EForce) return EForce;
-    if (var == ESolExact) return ESolExact;
-    if (var == EDSolExact) return EDSolExact;
-    // Code should not reach this point. This return is only here to stop compiler warnings.
-    DebugStop();
-    return -1;
+    return int(var);
 }
 
 Poisson::PostProcVar Poisson::VariableIndex(const std::string &name) {
@@ -69,7 +60,7 @@ Poisson::PostProcVar Poisson::VariableIndex(const std::string &name) {
     if (!strcmp("SolExact", name.c_str())) return ESolExact;
     if (!strcmp("DSolExact", name.c_str())) return EDSolExact;
     else {
-        std::cout << "variable not implemented" << std::endl;
+        std::cout << "variable "<< name << " not implemented" << std::endl;
     }
     // Code should not reach this point. This return is only here to stop compiler warnings.
     DebugStop();
@@ -78,11 +69,11 @@ Poisson::PostProcVar Poisson::VariableIndex(const std::string &name) {
 
 int Poisson::NSolutionVariables(const PostProcVar var) {
     if (var == ESol) return this->NState();
-    if (var == EDSol) return this->Dimension();
-    if (var == EFlux) return this->Dimension();
+    if (var == EDSol) return 3;
+    if (var == EFlux) return 3;
     if (var == EForce) return this->NState();
     if (var == ESolExact) return this->NState();
-    if (var == EDSolExact) return this->Dimension();
+    if (var == EDSolExact) return 3;
     else {
         std::cout << "variable not implemented" << std::endl;
     }
@@ -149,14 +140,12 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
 }
 
 void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDouble &Solout) const {
-    VecDouble sol = data.solution;
-    int solsize = sol.size();
-    int rows = data.dsoldx.rows();
-    int cols = data.dsoldx.cols();
-    MatrixDouble gradu(rows, cols);
-    gradu = data.dsoldx;
+    MatrixDouble gradudx, flux;
+    gradudx = data.axes.transpose()*data.dsoldx;
+    flux = -permeability*gradudx;
     
     int nstate = this->NState();
+    if(nstate != 1) DebugStop();
 
     switch (var) {
         case 0: //None
@@ -173,12 +162,17 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
 
         case 2: //EDSol
         {
-            Solout.resize(rows * cols);
-            for (int i = 0; i < rows; i++){
-                for (int j = 0; j < cols; j++){
-                    Solout[i * cols + j] = gradu(i, j);
-                }
+            //Solout.resize(rows * cols);
+            //for (int i = 0; i < rows; i++){
+            //    for (int j = 0; j < cols; j++){
+            //        Solout[i * cols + j] = gradu(i, j);
+            //    }
+            //}
+            Solout.resize(3);
+            for (int i = 0; i < 3; i++) {
+                Solout[i] = gradudx(i, 0);
             }
+            //+++++++++++++++++
         }
             break;
         case 3: //EFlux
@@ -193,12 +187,13 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
 
         case 4: //EForce
         {
+            //+++++++++++++++++
+            // Please implement me
+            // DebugStop();
             Solout.resize(nstate);
-            VecDouble result(nstate);
-            this->forceFunction(data.x, result);
-            for (int i = 0; i < nstate; i++) {
-                Solout[i] = result[i];
-            }
+            if(forceFunction) this->forceFunction(data.x, Solout);
+            else Solout.setZero();
+            //+++++++++++++++++
         }
             break;
 
@@ -206,9 +201,12 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
         {
             //+++++++++++++++++
             // Please implement me
-            std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            return; // FIX ME
-            DebugStop();
+            // DebugStop();
+            Solout.resize(nstate);
+            VecDouble sol(nstate);
+            MatrixDouble dsol(3, nstate);
+            if(SolutionExact) this->SolutionExact(data.x, Solout, dsol);
+            else Solout.setZero();
             //+++++++++++++++++
         }
             break;
@@ -216,20 +214,25 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
         {
             //+++++++++++++++++
             // Please implement me
-            std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            return; // FIX ME
-            DebugStop();
+            // DebugStop();
+            Solout.resize(3);
+            VecDouble sol(nstate);
+            MatrixDouble dsol(3, nstate);
+            if(SolutionExact) this->SolutionExact(data.x, sol, dsol);
+            else dsol.setZero();
+
+            for (int i = 0; i < 3; i++) {
+                Solout[i] = dsol(i, 0);
+            }
             //+++++++++++++++++
         }
             break;
-
-
         default:
         {
             std::cout << " Var index not implemented " << std::endl;
             DebugStop();
         }
-    }
+    }   
 }
 
 double Poisson::Inner(MatrixDouble &S, MatrixDouble & T) const {
