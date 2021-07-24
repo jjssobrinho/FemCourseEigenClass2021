@@ -29,16 +29,20 @@ using std::cout;
 using std::endl;
 using std::cin;
 
-int main ()
+int main (int argc, char *argv[])
 {
     
     GeoMesh gmesh;
     ReadGmsh readingGmsh;
-    std::string filename = "/home/jdasilva/Desktop/triangle.msh";
-    //std::string outputFile = "quads-mesh.vtk";
+    std::string dirName = "../../tests/";
+    std::string filepath = dirName + argv[1];
+    std::string outputFile = filepath.substr(0, filepath.find_last_of("."));
+    outputFile = outputFile +".vtk";
+
+    std::cout << outputFile << std::endl;
     
-    cout << "Reading Gmsh file: " << filename <<  endl;
-    readingGmsh.Read(gmesh, filename);
+    cout << "Reading Gmsh file: " << filepath <<  endl;
+    readingGmsh.Read(gmesh, filepath);
 
     // Computational mesh:
     CompMesh cmesh(&gmesh);
@@ -64,7 +68,7 @@ int main ()
     L2Projection *bc_point = new L2Projection(0, 3, proj, val1, val2);
     std::vector<MathStatement *> mathvec = {0, mat1, bc_linha, bc_point};
     cmesh.SetMathVec(mathvec);
-    cmesh.SetDefaultOrder(2);
+    cmesh.SetDefaultOrder(1);
     cmesh.AutoBuild();
     cmesh.Resequence();
     
@@ -84,7 +88,7 @@ int main ()
     postprocess.AppendVariable("DSolExact");
     postprocess.SetExact(exact);
     mat1->SetExactSolution(exact);
-    locAnalysis.PostProcessSolution("triangle.vtk",postprocess);
+    locAnalysis.PostProcessSolution(outputFile ,postprocess);
 
     VecDouble errvec;
     errvec = locAnalysis.PostProcessError(std::cout, postprocess);
