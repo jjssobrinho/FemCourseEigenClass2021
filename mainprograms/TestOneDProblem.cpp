@@ -35,15 +35,17 @@ using std::cin;
 
 void exact(const VecDouble &point,VecDouble &val, MatrixDouble &deriv);
 
-int main ()
+int main (int argc, char *argv[])
 {
     GeoMesh gmesh;
     ReadGmsh read;
-    std::string filename("oneD.msh");
-#ifdef MACOSX
-    filename = "../"+filename;
-#endif
-    read.Read(gmesh,filename);
+    std::string dirName = "../../tests/";
+    std::string filepath = dirName + argv[1];
+    //std::string filepath("oneD.msh");
+    std::string outputFile = filepath.substr(0, filepath.find_last_of("."));
+    outputFile = outputFile +".vtk";
+    
+    read.Read(gmesh,filepath);
 
     CompMesh cmesh(&gmesh);
     MatrixDouble perm(3,3);
@@ -56,7 +58,8 @@ int main ()
     
     auto force = [](const VecDouble &x, VecDouble &res)
     {
-        res[0] = 1.;
+        res[0] = 4*(-4 + x[0])*cos(x[0]) + 
+                (2. + 8.*x[0] - std::pow(x[0],2))*sin(x[0]) ;
     };
     mat1->SetForceFunction(force);
     MatrixDouble proj(1,1),val1(1,1),val2(1,1);
@@ -77,19 +80,25 @@ int main ()
     AnalysisLoc.RunSimulation();
     
     PostProcessTemplate<Poisson> postprocess;
+    postprocess.AppendVariable("Sol");
+    //postprocess.AppendVariable("DSol");
+    //postprocess.AppendVariable("Flux");
+    //postprocess.AppendVariable("Force");
+    postprocess.AppendVariable("SolExact");
+    //postprocess.AppendVariable("DSolExact");
     postprocess.SetExact(exact);
+    mat1->SetExactSolution(exact);
+    AnalysisLoc.PostProcessSolution(outputFile, postprocess);
     
     VecDouble errvec;
     errvec = AnalysisLoc.PostProcessError(std::cout, postprocess);
-    
     
     return 0;
 }
 void exact(const VecDouble &point,VecDouble &val, MatrixDouble &deriv){
 
-    deriv(0,0) = 4-point[0];
-    val[0]=point[0]*(8.-point[0])/2.;
+    deriv(0,0) = (8.-point[0])*point[0]*cos(point[0]) +
+                (8.-point[0])*sin(point[0])-point[0]*sin(point[0]);
+    val[0]=point[0]*sin(point[0])*(8.-point[0]);
     return;
 }
-
-

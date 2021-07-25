@@ -56,3 +56,14 @@ error = np.array([4.29717, 2.33426, 1.92219, 1.81116, 2.86259])
 error0 = np.array([0.310539, 0.138998, 0.0904695, 0.0712541, 0.344019])
 plot_erros(hq, error, error0, "quad-order2.eps")
 
+## One-D problem:
+#order 1:
+h = np.array([1.0, 0.5, 0.25, 0.125, 0.0625])
+error = np.array([9.52756, 4.72345, 2.35488, 1.17653, 0.588146])
+error0 = np.array([2.81863, 0.733864, 0.185345, 0.0464545, 0.011621])
+plot_erros(h, error, error0, "oneD-order1.eps")
+
+#order 2:
+error = np.array([1.6458, 0.415373, 0.104096, 0.0260399, 0.00651096])
+error0 = np.array([0.209737, 0.0267241, 0.00335691, 0.00042013, 5.25324e-05 ])
+plot_erros(h, error, error0, "oneD-order2.eps")
