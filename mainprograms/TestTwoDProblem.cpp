@@ -72,7 +72,7 @@ int main (int argc, char *argv[])
     L2Projection *bc_point = new L2Projection(0, 3, proj, val1, val2);
     std::vector<MathStatement *> mathvec = {0, mat1, bc_linha, bc_point};
     cmesh.SetMathVec(mathvec);
-    cmesh.SetDefaultOrder(1);
+    cmesh.SetDefaultOrder(2);
     cmesh.AutoBuild();
     cmesh.Resequence();
     
